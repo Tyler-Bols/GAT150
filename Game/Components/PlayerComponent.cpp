@@ -1,5 +1,6 @@
 #include "PlayerComponent.h"
 #include "Components/PhysicsComponent.h"
+#include "Components/AudioComponent.h"
 #include "pch.h"
 
 bool nc::PlayerComponent::Create(void* data)
@@ -38,5 +39,9 @@ void nc::PlayerComponent::Update()
 		{
 			component->ApplyForce(force);
 		}
-	
+		if (m_owner->m_engine->GetSystem<nc::InputSystem>()->GetButtonState(SDL_SCANCODE_SPACE) == nc::InputSystem::eButtonState::PRESSED)
+		{ force.y = -400000;
+		AudioComponent* audioComponent = m_owner->GetComponent<AudioComponent>(); 
+		if (audioComponent) { audioComponent->Play(); } 
+		}
 }

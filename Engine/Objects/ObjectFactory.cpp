@@ -4,7 +4,7 @@
 #include "Components/SpriteComponent.h"
 #include "Components/SpriteAnimationComponent.h"
 //#include "Components/RigidBodyComponent.h"
-//#include "Components/AudioComponent.h"
+#include "Components/AudioComponent.h"
 
 namespace nc
 {
@@ -15,6 +15,6 @@ namespace nc
 		ObjectFactory::Instance().Register("SpriteComponent", new Creator<SpriteComponent, Object>);
 		ObjectFactory::Instance().Register("SpriteAnimationComponent", new Creator<SpriteAnimationComponent, Object>);
 		//ObjectFactory::Instance().Register("RigidBodyComponent", new Creator<RigidBodyComponent, Object>);
-		//ObjectFactory::Instance().Register("AudioComponent", new Creator<AudioComponent, Object>);
+		ObjectFactory::Instance().Register("AudioComponent", new Creator<AudioComponent, Object>);
 	}
 }

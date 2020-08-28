@@ -3,6 +3,7 @@
 #include "Resources/ResourceManager.h"
 #include "Physics/PhysicsSystem.h"
 #include "Input/InputSystem.h"
+#include "Audio/AudioSystem.h"
 #include "Core/Timer.h"
 #include <vector>
 

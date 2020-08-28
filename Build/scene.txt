@@ -75,7 +75,11 @@
             60,
             112
           ]
-        }
+        },
+	{"type":"AudioComponent",
+	"sound":"jump.wav",
+	"playOnAwake": true,
+	"loop": false}
       ]
     },
     {
