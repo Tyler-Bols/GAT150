@@ -20,13 +20,15 @@ namespace nc
 		void Draw();
 
 		GameObject* Find(const std::string& name);
+		std::vector<GameObject*> FindGameObjectWithTag(const std::string& tag);
 
 		void AddGameObject(GameObject* gameObject); 
 		void RemoveGameObject(GameObject* gameObject); 
 		void RemoveAllGameObjects();
-
-	protected:
+	public:
 		Engine* m_engine{ nullptr }; 
+	
+	protected:
 		std::list<GameObject*> m_gameObjects;
 
 	};

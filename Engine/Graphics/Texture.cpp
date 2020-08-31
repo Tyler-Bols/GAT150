@@ -25,7 +25,7 @@ void nc::Texture::Destroy()
     SDL_DestroyTexture(m_texture);
 }
 
-void nc::Texture::Draw(const Vector2& position, const Vector2& scale, float angle, const Vector2& origin)
+void nc::Texture::Draw(const Vector2& position, const Vector2& scale, float angle, const Vector2& origin, bool flip)
 {
     Vector2 size = GetSize();
     size = size * scale;
@@ -37,10 +37,10 @@ void nc::Texture::Draw(const Vector2& position, const Vector2& scale, float angl
     rect.y = static_cast<int>(newPosition.y);
     rect.w = static_cast<int> (size.x);
     rect.h = static_cast<int> (size.y);
-    SDL_RenderCopyEx(m_renderer, m_texture, nullptr, &rect, angle,nullptr,SDL_FLIP_NONE);
+    SDL_RenderCopyEx(m_renderer, m_texture, nullptr, &rect, angle,nullptr, (flip) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
 }
 
-void nc::Texture::Draw(const SDL_Rect& source, const Vector2& position, const Vector2& scale, float angle, const Vector2& origin)
+void nc::Texture::Draw(const SDL_Rect& source, const Vector2& position, const Vector2& scale, float angle, const Vector2& origin, bool flip)
 {
     Vector2 size = { source.w,source.h };
     size = size * scale;
@@ -52,7 +52,7 @@ void nc::Texture::Draw(const SDL_Rect& source, const Vector2& position, const Ve
     rect.y = static_cast<int>(newPosition.y);
     rect.w = static_cast<int> (size.x);
     rect.h = static_cast<int> (size.y);
-    SDL_RenderCopyEx(m_renderer, m_texture, &source, &rect, angle, nullptr, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(m_renderer, m_texture, &source, &rect, angle, nullptr,(flip) ? SDL_FLIP_HORIZONTAL: SDL_FLIP_NONE);
 }
 
 nc::Vector2 nc::Texture::GetSize()

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Engine.h"
+#include <time.h>
 
 
 
@@ -10,6 +11,7 @@ bool nc::Engine::Startup()
         std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
         return false;
     }
+    srand(static_cast<unsigned int>(time(nullptr)));
 
     m_systems.push_back(new Renderer);
     m_systems.push_back(new InputSystem);
@@ -22,10 +24,10 @@ bool nc::Engine::Startup()
         system->Startup();
     }
 
-    if (auto renderer = GetSystem<Renderer>())
-    {
-        renderer->Create("GAT150", 800, 600);
-    }
+    
+    
+        GetSystem<Renderer>()->Create("GAT150", 800, 600);
+    
 
     return true;
 }

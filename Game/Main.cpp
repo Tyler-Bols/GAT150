@@ -3,9 +3,11 @@
 #include "Engine.h"
 #include "Objects/GameObject.h"
 #include "Components/PlayerComponent.h"
+#include "Components/EnemyComponent.h"
 #include "Core/Json.h"
 #include "Objects/ObjectFactory.h"
 #include "Objects/Scene.h"
+#include "TileMap.h"
 using namespace nc;
 
 nc::Engine engine;
@@ -18,6 +20,7 @@ int main(int, char**)
 	
 	ObjectFactory::Instance().Initialize();
 	ObjectFactory::Instance().Register("PlayerComponent", new nc::Creator<nc::PlayerComponent, nc::Object>);
+	ObjectFactory::Instance().Register("EnemyComponent", new nc::Creator<nc::EnemyComponent, nc::Object>);
 
 	rapidjson::Document document; 
 	nc::json::Load("scene.txt", document);
@@ -25,7 +28,19 @@ int main(int, char**)
 	scene.Create(&engine);
 	scene.Read(document);
 
-	//nc::Texture* background = engine.GetSystem<ResourceManager>()->Get<nc::Texture>("background.png", engine.GetSystem <Renderer>());
+	TileMap tileMap;
+	nc::json::Load("tileMap.txt", document);
+	tileMap.Read(document);
+	tileMap.Create(&scene);
+
+	//for (size_t i = 0; i < 10; i++)
+	//{
+	//	GameObject* gameobject = ObjectFactory::Instance().Create<GameObject>("ProtoCoin");
+	//	gameobject->m_transform.position = Vector2{ random(0,800),random(200,400) };
+	//	//gameobject->m_transform.angle = random(0, 360);
+	//	scene.AddGameObject(gameobject);
+	//}
+
 
 	SDL_Event event;
 	bool quit = false;
@@ -47,7 +62,6 @@ int main(int, char**)
 	
 		engine.GetSystem <Renderer>()->Begin();
 
-		//background->Draw({ 0,0 }, { 1.0f,1.0f },0);
 
 		scene.Draw();
 

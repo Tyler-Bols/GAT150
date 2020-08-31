@@ -3,12 +3,36 @@
 #include "Components/Component.h"
 #include "Components/RenderComponent.h"
 #include "ObjectFactory.h"
+#include "Objects/Scene.h"
 
 namespace nc {
+    GameObject::GameObject(const GameObject& other)
+    {
+        m_name = other.m_name;
+        m_tag = other.m_tag;
+        m_lifetime = other.m_lifetime;
+
+        m_flags = other.m_flags;
+
+        m_transform = other.m_transform;
+        m_engine = other.m_engine;
+        m_scene = other.m_scene;
+
+        for (Component* component : other.m_components)
+        {
+            Component* clone = dynamic_cast<Component*>(component->Clone());
+            clone->m_owner = this;
+            AddComponent(clone);
+        }
+
+
+
+    }
 
     bool GameObject::Create(void* data)
     {
-        m_engine = static_cast<Engine*>(data);
+        m_scene = static_cast<Scene*>(data);
+        m_engine = m_scene->m_engine;
         return true;
 
     }
@@ -20,14 +44,26 @@ namespace nc {
     void GameObject::Read(const rapidjson::Value& value)
     {
         json::Get(value, "name", m_name);
+        json::Get(value, "tag", m_tag);
+        json::Get(value, "lifetime", m_lifetime);
+
+        bool transient = m_flags[eFlags::TRANSIENT];
+        json::Get(value, "transient", transient);
+        m_flags[eFlags::TRANSIENT] = transient;
 
         json::Get(value, "position", m_transform.position);
         json::Get(value, "scale", m_transform.scale);
         json::Get(value, "angle", m_transform.angle);
 
-        const rapidjson::Value& componentsValue = value["Components"]; 
-        if (componentsValue.IsArray())
-        { ReadComponents(componentsValue); }
+        if(value.HasMember("Components"))
+        {  const rapidjson::Value& componentsValue = value["Components"]; 
+            if (componentsValue.IsArray())
+            {
+                ReadComponents(componentsValue); 
+            }
+        }
+
+       
     }
 
     void GameObject::AddComponent(Component* component)
@@ -67,7 +103,7 @@ namespace nc {
                 Component* component = ObjectFactory::Instance().Create<Component>(typeName);
                 if (component)
                  {
-                        component->Create(m_engine);
+                        component->Create(this);
                         component->Read(componentValue);
                         AddComponent(component);
                 }
@@ -81,6 +117,15 @@ namespace nc {
         {
             component->Update();
         }
+
+        if(m_flags[eFlags::TRANSIENT])
+        {
+            m_lifetime = m_lifetime - m_engine->GetTimer().DeltaTime();
+            if(m_lifetime<= 0 )
+            {
+                m_flags[eFlags::DESTROY] = true;
+            }
+        }
     }
     void GameObject::Draw()
     {
@@ -92,5 +137,27 @@ namespace nc {
                 component->Draw();
             }
         }
+    }
+    void GameObject::BeginContact(GameObject* gameObject)
+    {
+        m_contacts.push_back(gameObject);
+
+    }
+    void GameObject::EndContact(GameObject* gameObject)
+    {
+        m_contacts.remove(gameObject);
+    }
+    std::vector<GameObject*> GameObject::GetObjectWithTag(const std::string& tag)
+    {
+        std::vector<GameObject*> contacts;
+        for (auto contact : m_contacts)
+        {
+            if (contact->m_tag == tag)
+            {
+                contacts.push_back(contact);
+            }
+        }
+
+        return contacts;
     }
 }

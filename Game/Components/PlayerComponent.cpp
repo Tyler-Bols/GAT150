@@ -1,12 +1,14 @@
 #include "PlayerComponent.h"
 #include "Components/PhysicsComponent.h"
 #include "Components/AudioComponent.h"
+#include "Components/RigidBodyComponent.h"
+#include "Components/SpriteComponent.h"
 #include "pch.h"
 
 bool nc::PlayerComponent::Create(void* data)
 {
 	m_owner = static_cast<GameObject*>(data);
-	m_owner->m_engine = static_cast<Engine*>(data);
+	//m_owner->m_engine = static_cast<Engine*>(data);
 	return true;
 
 }
@@ -17,31 +19,49 @@ void nc::PlayerComponent::Destroy()
 
 void nc::PlayerComponent::Update()
 {
+	auto contacts = m_owner->GetObjectWithTag("Floor");
+	bool onGround = !contacts.empty();
+		nc::Vector2 force = { 0,0 };
 	
 		if (m_owner->m_engine->GetSystem <InputSystem>()->GetButtonState(SDL_SCANCODE_A) == nc::InputSystem::eButtonState::HELD)
-		{
-			m_owner->m_transform.angle = m_owner->m_transform.angle - 10.0f * m_owner->m_engine->GetTimer().DeltaTime();
-		}
+		{	force.x = -100;}
 		if (m_owner->m_engine->GetSystem <InputSystem>()->GetButtonState(SDL_SCANCODE_D) == nc::InputSystem::eButtonState::HELD)
-		{
-			m_owner->m_transform.angle = m_owner->m_transform.angle + 10.0f * m_owner->m_engine->GetTimer().DeltaTime();
-		}
+		{	force.x = 100;}
+		if (onGround && m_owner->m_engine->GetSystem <InputSystem>()->GetButtonState(SDL_SCANCODE_SPACE) == nc::InputSystem::eButtonState::PRESSED)
+		{	force.y = -1500;}
 
-		nc::Vector2 force = { 0,0 };
-		if (m_owner->m_engine->GetSystem <InputSystem>()->GetButtonState(SDL_SCANCODE_W) == nc::InputSystem::eButtonState::HELD)
-		{
-			force = nc::Vector2::forward * 50.0f;
-		}
-		force = nc::Vector2::Rotate(force, nc::DegreesToRadian(m_owner->m_transform.angle));
+		
 
-		PhysicsComponent* component = m_owner->GetComponent<PhysicsComponent>();
+		RigidBodyComponent* component = m_owner->GetComponent<RigidBodyComponent>();
 		if (component)
 		{
 			component->ApplyForce(force);
+
+			Vector2 velocity = component->GetVelocity();
+			SpriteComponent* spriteComponent = m_owner->GetComponent<SpriteComponent>();
+			if (velocity.x <= -0.15f)spriteComponent->Flip();
+			if (velocity.x >= 0.15f)spriteComponent->Flip(false);
 		}
-		if (m_owner->m_engine->GetSystem<nc::InputSystem>()->GetButtonState(SDL_SCANCODE_SPACE) == nc::InputSystem::eButtonState::PRESSED)
+
+
+		auto coinContacts = m_owner->GetObjectWithTag("Coin");
+		for (GameObject* contact : coinContacts)
+		{
+			contact->m_flags[GameObject::eFlags::DESTROY] = true;
+		}
+		auto enemyContacts = m_owner->GetObjectWithTag("Enemy");
+		for (GameObject* contact : enemyContacts)
+		{
+			/*AudioComponent audioComponent = m_owner->GetComponent<AudioComponent>();
+			if (audioComponent)
+			{
+
+			}*/
+		}
+
+		/*if (m_owner->m_engine->GetSystem<nc::InputSystem>()->GetButtonState(SDL_SCANCODE_SPACE) == nc::InputSystem::eButtonState::PRESSED)
 		{ force.y = -400000;
 		AudioComponent* audioComponent = m_owner->GetComponent<AudioComponent>(); 
 		if (audioComponent) { audioComponent->Play(); } 
-		}
+		}*/
 }

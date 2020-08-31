@@ -7,7 +7,7 @@ namespace nc
     bool nc::PhysicsComponent::Create(void* data)
     {
         m_owner = static_cast<GameObject*>(data);
-        m_owner->m_engine = static_cast<Engine*>(data);
+       // m_owner->m_engine = static_cast<Engine*>(data);
 
         m_drag = 1.0f;
         return true;

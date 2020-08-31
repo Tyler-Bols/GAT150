@@ -17,10 +17,13 @@ namespace nc
 		virtual void Update() override;
 		virtual void Draw() override;
 
+		void Flip(bool flip = true) { m_flip = flip; }
+
 	protected:
 		std::string m_textureName;
 		SDL_Rect m_rect{0,0,0,0};
 		Vector2 m_origin{0,0};
+		bool m_flip{ false };
 	};
 
 

@@ -2,14 +2,30 @@
 #include "Objects/Object.h"
 #include "Math/Transform.h"
 #include "Engine.h"
-#include <vector>
+#include <bitset>
+#include <list>
+//#include <vector>
 namespace nc 
 {
+	class Engine;
 	class Component;
+	class Scene;
 
 	class GameObject : public Object
 	{
 	public:
+		enum eFlags
+		{
+			ACTIVE,
+			VISIBLE,
+			DESTROY,
+			TRANSIENT
+		};
+
+
+	public:
+		GameObject() = default;
+		GameObject(const GameObject& other);
 
 		virtual bool Create(void* data = nullptr);
 		virtual void Destroy();
@@ -20,6 +36,11 @@ namespace nc
 
 		void Update();
 		void Draw();
+
+
+		void BeginContact(GameObject* gameObject);
+		void EndContact(GameObject* gameObject);
+		std::vector<GameObject*> GetObjectWithTag(const std::string& tag);
 
 		template<typename T>
 		T* GetComponent()
@@ -45,10 +66,18 @@ namespace nc
 	public:
 		Transform m_transform;
 		Engine* m_engine{nullptr};
+		Scene* m_scene{ nullptr };
+		float m_lifetime{0};
+
+		std::bitset<32> m_flags;
+
 		std::string m_name;
+		std::string m_tag;
 
 	protected:
 		std::vector<Component*> m_components;
+		std::list<GameObject*> m_contacts;
+
 
 		
 

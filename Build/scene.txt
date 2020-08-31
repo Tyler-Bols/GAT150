@@ -1,45 +1,212 @@
 {
-  "Prototypes":[
+  "Prototypes": [
     {
-      "type":"GameObject",
-      "name":"ProtoExplosion",
-      "position":[
+      "type": "GameObject",
+      "name": "ProtoExplosion",
+      "tag": "FX",
+      "transient": true,
+      "lifetime": 1.5,
+      "position": [
         300,
         400
       ],
-      "scale":1,
-      "angle":45,
-      "Components":[
+      "scale": 1,
+      "angle": 45,
+      "Components": [
         {
-          "type":"SpriteAnimationComponent",
-          "texture":"explosion.png",
-          "origin":[
+          "type": "SpriteAnimationComponent",
+          "texture": "explosion.png",
+          "origin": [
             0.5,
             0.5
           ],
-          "numX":5,
-          "numY":5,
-          "numFrames":25,
-          "fps":30
+          "numX": 5,
+          "numY": 5,
+          "numFrames": 25,
+          "fps": 30
+        }
+      ]
+    },
+    {
+      "type": "GameObject",
+      "name": "ProtoCoin",
+      "tag": "FX",
+      "transient": false,
+      "position": [
+        300,
+        400
+      ],
+      "scale": 1,
+      "angle": 45,
+      "Components": [
+        {
+          "type": "SpriteAnimationComponent",
+          "texture": "coin.png",
+          "origin": [
+            0.5,
+            0.5
+          ],
+          "numX": 8,
+          "numY": 1,
+          "numFrames": 8,
+          "fps": 30
+        },
+        {
+          "type": "RigidBodyComponent",
+          "isDynamic": false,
+          "isSensor": true,
+          "lockAngle": true,
+          "size": [
+            16,
+            16
+          ],
+          "density": 1,
+          "friction": 1,
+          "restitution": 0.7
+        }
+      ]
+    },
+    {
+      "type": "GameObject",
+      "name": "ProtoBat",
+      "tag": "Enemy",
+      "transient": false,
+      "position": [
+        300,
+        400
+      ],
+      "scale": 1,
+      "angle": 45,
+      "Components": [
+        {
+          "type": "SpriteAnimationComponent",
+          "texture": "textures/bat.png",
+          "origin": [
+            0.5,
+            0.5
+          ],
+          "numX": 4,
+          "numY": 1,
+          "numFrames": 4,
+          "fps": 10
+        },
+        {
+        "type": "EnemyComponent"
+        },
+        {
+          "type": "RigidBodyComponent",
+          "isDynamic": true,
+          "isSensor": false,
+          "lockAngle": true,
+          "size": [
+            16,
+            16
+          ],
+          "density": 1,
+          "friction": 1,
+          "restitution": 0.7,
+          "gravityScale": 0
+        }
+      ]
+    },
+    {
+      "type": "GameObject",
+      "name": "ProtoBox",
+      "tag": "Floor",
+      "position": [
+        400,
+        500
+      ],
+      "scale": 1,
+      "angle": 0,
+      "Components": [
+        {
+          "type": "SpriteComponent",
+          "texture": "crate.png",
+          "origin": [
+            0.5,
+            0.5
+          ],
+          "rect": [
+            0,
+            0,
+            32,
+            32
+          ]
+        },
+        {
+          "type": "RigidBodyComponent",
+          "isDynamic": true,
+          "lockAngle": false,
+          "size": [
+            16,
+            16
+          ],
+          "density": 1,
+          "friction": 1,
+          "restitution": 0
+        }
+      ]
+    },
+    {
+      "type": "GameObject",
+      "name": "Tile01",
+      "tag": "Floor",
+      "position": [
+        400,
+        500
+      ],
+      "scale": 1,
+      "angle": 0,
+      "Components": [
+        {
+          "type": "SpriteComponent",
+          "texture": "textures/tile01.png",
+          "origin": [
+            0.5,
+            0.5
+          ],
+          "rect": [
+            0,
+            0,
+            64,
+            64
+          ]
+        },
+        {
+          "type": "RigidBodyComponent",
+          "isDynamic": false,
+          "lockAngle": false,
+          "size": [
+            32,
+            32
+          ],
+          "density": 1,
+          "friction": 1,
+          "restitution": 0
         }
       ]
     }
   ],
-  "GameObjects":[
+  "GameObjects": [
     {
-      "type":"GameObject",
-      "name":"Background",
-      "position":[
+      "type": "GameObject",
+      "name": "Background",
+      "position": [
         0,
         0
       ],
-      "scale":1,
-      "angle":0,
-      "Components":[
+      "scale": 1,
+      "angle": 0,
+      "Components": [
         {
-          "type":"SpriteComponent",
-          "texture":"background.png",
-          "rect":[
+          "type": "SpriteComponent",
+          "texture": "textures/background.png",
+          "origin": [
+            0,
+            0
+          ],
+          "rect": [
             0,
             0,
             800,
@@ -49,60 +216,42 @@
       ]
     },
     {
-      "type":"GameObject",
-      "name":"Player",
-      "position":[
+      "type": "GameObject",
+      "name": "Player",
+      "tag": "Player",
+      "position": [
         300,
         400
       ],
-      "scale":1,
-      "angle":45,
-      "Components":[
+      "scale": 1,
+      "angle": 45,
+      "Components": [
         {
-          "type":"PhysicsComponent"
-        },
-        {
-         
-          "type":"SpriteComponent",
-          "texture":"cars.png",
-          "origin":[
+          "type": "SpriteAnimationComponent",
+          "texture": "textures/player.png",
+          "origin": [
             0.5,
             0.5
           ],
-          "rect":[
-            64,
-            110,
-            60,
-            112
-          ]
+          "numX": 8,
+          "numY": 1,
+          "numFrames": 8,
+          "fps": 15
         },
-	{"type":"AudioComponent",
-	"sound":"jump.wav",
-	"playOnAwake": true,
-	"loop": false}
-      ]
-    },
-    {
-      "type":"GameObject",
-      "name":"Explosion",
-      "position":[
-        300,
-        400
-      ],
-      "scale":1,
-      "angle":45,
-      "Components":[
         {
-          "type":"SpriteAnimationComponent",
-          "texture":"explosion.png",
-          "origin":[
-            0.5,
-            0.5
+          "type": "RigidBodyComponent",
+          "isDynamic": true,
+          "lockAngle": true,
+          "size": [
+            16,
+            32
           ],
-          "numX":5,
-          "numY":5,
-          "numFrames":25,
-          "fps":30
+          "density": 1,
+          "friction": 4,     
+          "gravityScale": 2
+        },
+        {
+          "type": "PlayerComponent"
         }
       ]
     }

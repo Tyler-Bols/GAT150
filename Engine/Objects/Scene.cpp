@@ -16,6 +16,15 @@ void nc::Scene::Destroy()
 
 void nc::Scene::Read(const rapidjson::Value& value)
 {
+    if (value.HasMember("Prototypes"))
+    {
+        const rapidjson::Value& objectsValue = value["Prototypes"];
+        if (objectsValue.IsArray())
+        {
+            ReadPrototypes(objectsValue);
+        }
+
+    }
     if (value.HasMember("GameObjects"))
     {
         const rapidjson::Value& objectsValue = value["GameObjects"];
@@ -39,7 +48,7 @@ void nc::Scene::ReadGameObjects(const rapidjson::Value& value)
             nc::GameObject* gameObject = nc::ObjectFactory::Instance().Create<GameObject>(typeName);
             if (gameObject)
             {
-                gameObject->Create(m_engine);
+                gameObject->Create(this);
                 gameObject->Read(objectValue);
                 gameObject->m_engine = m_engine;
                 AddGameObject(gameObject);
@@ -55,7 +64,7 @@ void nc::Scene::ReadPrototypes(const rapidjson::Value& value)
 {
     for (rapidjson::SizeType i = 0; i < value.Size(); i++)
      {
-    const rapidjson::Value& objectValue = value["GameObject"];
+    const rapidjson::Value& objectValue = value[i];
     if (objectValue.IsObject())
     {
         std::string typeName;
@@ -63,9 +72,10 @@ void nc::Scene::ReadPrototypes(const rapidjson::Value& value)
         nc::GameObject* gameObject = nc::ObjectFactory::Instance().Create<GameObject>(typeName);
         if (gameObject)
         {
-            gameObject->Create(m_engine);
+            gameObject->Create(this);
             gameObject->Read(objectValue);
             gameObject->m_engine = m_engine;
+            std::cout << gameObject->m_name;
             ObjectFactory::Instance().Register(gameObject->m_name, new Prototype<Object>(gameObject));
         }
 
@@ -78,10 +88,24 @@ void nc::Scene::ReadPrototypes(const rapidjson::Value& value)
 
 void nc::Scene::Update()
 {
-    for (auto gameObject : m_gameObjects)
+    for (auto& gameObject : m_gameObjects)
     {
         gameObject->Update();
 
+    }
+    auto iter = m_gameObjects.begin();
+    while (iter != m_gameObjects.end())
+    {
+        if ((*iter)->m_flags[GameObject::eFlags::DESTROY])
+        {
+            (*iter)->Destroy();
+            delete (*iter);
+            iter = m_gameObjects.erase(iter);
+        }
+        else
+        {
+            iter++;
+        }
     }
 }
 
@@ -107,6 +131,21 @@ nc::GameObject* nc::Scene::Find(const std::string& name)
 
     }
     return nullptr;
+}
+
+std::vector<nc::GameObject*> nc::Scene::FindGameObjectWithTag(const std::string& tag)
+{
+   std::vector<GameObject*> gameObjects;
+   for (auto gameObject : m_gameObjects)
+   {
+       if (gameObject->m_tag == tag)
+       {
+           gameObjects.push_back(gameObject);
+       }
+   }
+
+
+   return gameObjects;
 }
 
 void nc::Scene::AddGameObject(GameObject* gameObject)

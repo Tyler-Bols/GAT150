@@ -1,10 +1,15 @@
 #include "pch.h"
 #include "PhysicsSystem.h"
+#include "Objects/GameObject.h"
+#include "ContactListener.h"
 
 bool nc::PhysicsSystem::Startup()
 {
-    b2Vec2 gravity = { 0,-10 };
+    b2Vec2 gravity = { 0,10 };
     m_world = new b2World(gravity);
+
+    m_contactListener = new ContactListener;
+    m_world->SetContactListener(m_contactListener);
     return true;
 }
 
@@ -35,4 +40,37 @@ b2Body* nc::PhysicsSystem::CreateBody(const Vector2& position, const Vector2& si
     body->CreateFixture(&shape, density);   
 
     return body;
+}
+
+b2Body* nc::PhysicsSystem::CreateBody(const Vector2& position,float angle, const RigidBodyData& data, nc::GameObject* gameObject)
+{
+    b2BodyDef bodyDef;
+
+    Vector2 world = PhysicsSystem::ScreenToWorld(position);
+
+    bodyDef.type = (data.isDynamic) ? b2_dynamicBody : b2_staticBody;
+    bodyDef.position.Set(world.x, world.y);
+    bodyDef.angle = nc::DegreesToRadian(angle);
+    bodyDef.fixedRotation = data.lockAngle;
+    b2Body* body = m_world->CreateBody(&bodyDef);
+
+    b2PolygonShape shape;
+    Vector2 worldSize = PhysicsSystem::ScreenToWorld(data.size);
+    shape.SetAsBox(worldSize.x, worldSize.y);
+
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &shape;
+    fixtureDef.density = data.density;
+    fixtureDef.friction = data.friction;
+    fixtureDef.restitution = data.restitution;
+    fixtureDef.isSensor = data.isSensor;
+    fixtureDef.userData = gameObject;
+    body->CreateFixture(&shape, data.density);
+
+    return body;
+}
+
+void nc::PhysicsSystem::DestroyBody(b2Body* body)
+{
+    m_world->DestroyBody(body);
 }
