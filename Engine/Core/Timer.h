@@ -14,7 +14,6 @@ namespace nc
 		void Reset();
 		clock::rep ElapsedTicks();
 		clock::rep TicksPerSecond();
-
 		double ElaspedSeconds();
 	protected:
 		clock::time_point m_timePoint;
