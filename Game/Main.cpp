@@ -4,6 +4,7 @@
 #include "Objects/GameObject.h"
 #include "Components/PlayerComponent.h"
 #include "Components/EnemyComponent.h"
+#include"Components/AudioComponent.h"
 #include "Core/Json.h"
 #include "Objects/ObjectFactory.h"
 #include "Objects/Scene.h"

@@ -2,35 +2,8 @@
   "Prototypes": [
     {
       "type": "GameObject",
-      "name": "ProtoExplosion",
-      "tag": "FX",
-      "transient": true,
-      "lifetime": 1.5,
-      "position": [
-        300,
-        400
-      ],
-      "scale": 1,
-      "angle": 45,
-      "Components": [
-        {
-          "type": "SpriteAnimationComponent",
-          "texture": "explosion.png",
-          "origin": [
-            0.5,
-            0.5
-          ],
-          "numX": 5,
-          "numY": 5,
-          "numFrames": 25,
-          "fps": 30
-        }
-      ]
-    },
-    {
-      "type": "GameObject",
       "name": "ProtoCoin",
-      "tag": "FX",
+      "tag": "Coin",
       "transient": false,
       "position": [
         300,
@@ -41,7 +14,7 @@
       "Components": [
         {
           "type": "SpriteAnimationComponent",
-          "texture": "coin.png",
+          "texture": "textures/coin.png",
           "origin": [
             0.5,
             0.5
@@ -63,6 +36,9 @@
           "density": 1,
           "friction": 1,
           "restitution": 0.7
+        },
+         {
+          "type": "AudioComponent"
         }
       ]
     },
@@ -122,7 +98,7 @@
       "Components": [
         {
           "type": "SpriteComponent",
-          "texture": "crate.png",
+          "texture": "textures/crate.png",
           "origin": [
             0.5,
             0.5
@@ -252,6 +228,9 @@
         },
         {
           "type": "PlayerComponent"
+        },
+        {
+          "type": "AudioComponent"
         }
       ]
     }

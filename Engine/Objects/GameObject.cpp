@@ -141,11 +141,21 @@ namespace nc {
     void GameObject::BeginContact(GameObject* gameObject)
     {
         m_contacts.push_back(gameObject);
+        Event event;
+        event.type = "CollisionEnter";
+        event.sender = gameObject;
+        event.receiver = this;
+
+        EventManager::Instance().Notify(event);
 
     }
     void GameObject::EndContact(GameObject* gameObject)
     {
         m_contacts.remove(gameObject);
+        Event event;
+        event.type = "CollisionExit";
+        event.sender = gameObject;
+        event.receiver = this;
     }
     std::vector<GameObject*> GameObject::GetObjectWithTag(const std::string& tag)
     {

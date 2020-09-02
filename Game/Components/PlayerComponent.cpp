@@ -3,12 +3,15 @@
 #include "Components/AudioComponent.h"
 #include "Components/RigidBodyComponent.h"
 #include "Components/SpriteComponent.h"
+#include "Core/EventManager.h"
 #include "pch.h"
 
 bool nc::PlayerComponent::Create(void* data)
 {
 	m_owner = static_cast<GameObject*>(data);
-	//m_owner->m_engine = static_cast<Engine*>(data);
+	EventManager::Instance().Subscribe("CollisionEnter", std::bind(&PlayerComponent::onCollisionEnter, this, std::placeholders::_1), m_owner);
+	EventManager::Instance().Subscribe("CollisionExit", std::bind(&PlayerComponent::onCollisionExit, this, std::placeholders::_1), m_owner);
+
 	return true;
 
 }
@@ -27,8 +30,12 @@ void nc::PlayerComponent::Update()
 		{	force.x = -100;}
 		if (m_owner->m_engine->GetSystem <InputSystem>()->GetButtonState(SDL_SCANCODE_D) == nc::InputSystem::eButtonState::HELD)
 		{	force.x = 100;}
-		if (onGround && m_owner->m_engine->GetSystem <InputSystem>()->GetButtonState(SDL_SCANCODE_SPACE) == nc::InputSystem::eButtonState::PRESSED)
-		{	force.y = -1500;}
+		if (/*onGround &&*/ m_owner->m_engine->GetSystem <InputSystem>()->GetButtonState(SDL_SCANCODE_SPACE) == nc::InputSystem::eButtonState::PRESSED)
+		{	force.y = -1500;
+		AudioComponent* audiocomponent = m_owner->GetComponent<AudioComponent>();
+		audiocomponent->SetSoundName("jump.wav");
+		audiocomponent->Play();
+		}
 
 		
 
@@ -44,7 +51,7 @@ void nc::PlayerComponent::Update()
 		}
 
 
-		auto coinContacts = m_owner->GetObjectWithTag("Coin");
+		/*auto coinContacts = m_owner->GetObjectWithTag("Coin");
 		for (GameObject* contact : coinContacts)
 		{
 			contact->m_flags[GameObject::eFlags::DESTROY] = true;
@@ -52,16 +59,37 @@ void nc::PlayerComponent::Update()
 		auto enemyContacts = m_owner->GetObjectWithTag("Enemy");
 		for (GameObject* contact : enemyContacts)
 		{
-			/*AudioComponent audioComponent = m_owner->GetComponent<AudioComponent>();
-			if (audioComponent)
-			{
-
-			}*/
-		}
-
-		/*if (m_owner->m_engine->GetSystem<nc::InputSystem>()->GetButtonState(SDL_SCANCODE_SPACE) == nc::InputSystem::eButtonState::PRESSED)
-		{ force.y = -400000;
-		AudioComponent* audioComponent = m_owner->GetComponent<AudioComponent>(); 
-		if (audioComponent) { audioComponent->Play(); } 
+			contact->m_flags[GameObject::eFlags::DESTROY] = true;
 		}*/
+
+}
+
+void nc::PlayerComponent::onCollisionEnter(const Event& event)
+{
+
+	GameObject* gameobject = dynamic_cast<GameObject*>(event.sender);
+	std::cout << "collision event: " << gameobject->m_name << std::endl;
+	if (gameobject->m_tag == "Enemy")
+	{
+		AudioComponent* audiocomponent = m_owner->GetComponent<AudioComponent>();
+		audiocomponent->SetSoundName("grunt.wav");
+		audiocomponent->Play();
+	}
+	if (gameobject->m_tag == "Coin")
+	{
+		AudioComponent* audiocomponent = m_owner->GetComponent<AudioComponent>();
+		audiocomponent->SetSoundName("coin.wav");
+		audiocomponent->Play();
+		gameobject->m_flags[GameObject::eFlags::DESTROY] = true;
+
+	}
+
+}
+
+void nc::PlayerComponent::onCollisionExit(const Event& event)
+{
+	GameObject* gameobject = dynamic_cast<GameObject*>(event.sender);
+	std::cout << "collision end: " << gameobject->m_name << std::endl;
+
+
 }

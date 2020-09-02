@@ -75,7 +75,7 @@ void nc::Scene::ReadPrototypes(const rapidjson::Value& value)
             gameObject->Create(this);
             gameObject->Read(objectValue);
             gameObject->m_engine = m_engine;
-            std::cout << gameObject->m_name;
+           
             ObjectFactory::Instance().Register(gameObject->m_name, new Prototype<Object>(gameObject));
         }
 
